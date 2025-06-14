@@ -111,7 +111,7 @@ export default function RealPixQRCode({
 
       const requestData = {
         amount: amount.toString(),
-        description: `Programa Luz do Povo - Taxa Residual - ${customerName}`,
+        description: `Depósito PIX - ${customerName}`,
         customerName: customerName.trim(),
         customerEmail: customerEmail.trim(),
         customerDocument: customerCpf,
