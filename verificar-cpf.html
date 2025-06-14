@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Programa Luz do Povo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login-styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rawline:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://www.gov.br/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="gov-header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://www.gov.br/++theme++padrao_govbr/img/govbr-colorido-b.png" alt="Logo Gov.br" class="gov-logo">
+                <nav class="header-nav">
+                    <ul>
+                        <li><a href="#">Serviços</a></li>
+                        <li><a href="#">Órgãos</a></li>
+                        <li><a href="#">Acesso à Informação</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="login-body">
+        <div class="login-container">
+            <div class="login-grid">
+                <div class="login-banner">
+                    <div class="banner-content">
+                        <h2>Programa Luz do Povo</h2>
+                        <p>Verifique se você tem direito ao benefício que zera sua conta de luz.</p>
+                        <div class="banner-icon">⚡</div>
+                    </div>
+                </div>
+                <div class="login-form-container">
+                    <div class="login-form-content">
+                        <h1>Identifique-se no gov.br</h1>
+                        
+                        <div class="login-form">
+                            <div class="form-group">
+                                <label for="cpf">Número do CPF</label>
+                                <p class="form-hint">Digite seu CPF para verificar se você tem direito ao benefício</p>
+                                <div class="input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        id="cpf" 
+                                        placeholder="Digite seu CPF" 
+                                        maxlength="14"
+                                        class="form-input"
+                                    >
+                                    <div class="input-status-icon success-icon">
+                                        <span class="material-icons">check_circle</span>
+                                    </div>
+                                    <div class="input-status-icon error-icon">
+                                        <span class="material-icons">error</span>
+                                    </div>
+                                    <div class="input-status-icon loading-icon">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                                <p class="error-message"></p>
+                            </div>
+                            
+                            <button id="continue-button" class="primary-button" disabled>Continuar</button>
+                        </div>
+                        
+                        <div class="other-login-options">
+                            <h3>Outras opções de identificação:</h3>
+                            <ul class="login-options-list">
+                                <li>
+                                    <button class="option-button">
+                                        <span class="material-icons">account_balance</span>
+                                        Login com seu banco
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="option-button">
+                                        <span class="material-icons">qr_code_scanner</span>
+                                        Login com QR code
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="option-button">
+                                        <span class="material-icons">verified_user</span>
+                                        Seu certificado digital
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="login-footer">
+                            <a href="#">Está com dúvidas e precisa de ajuda?</a>
+                            <a href="#">Termo de Uso e Aviso de Privacidade</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="verification-screen" class="verification-screen hidden">
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <div class="terminal-button red"></div>
+                        <div class="terminal-button yellow"></div>
+                        <div class="terminal-button green"></div>
+                    </div>
+                    <div class="terminal-title">Terminal</div>
+                </div>
+                <div class="terminal-body">
+                    <div id="terminal-content"></div>
+                    <div id="cursor" class="cursor"></div>
+                </div>
+                <div class="terminal-footer">
+                    <button id="next-button" class="primary-button hidden">Ver Resultado e Prosseguir</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="gov-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="https://www.gov.br/++theme++padrao_govbr/img/govbr-colorido-b.png" alt="Logo Gov.br" class="gov-logo">
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Governo Federal</h3>
+                        <ul>
+                            <li><a href="#">Órgãos do Governo</a></li>
+                            <li><a href="#">Acesso à Informação</a></li>
+                            <li><a href="#">Legislação</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Canais de Atendimento</h3>
+                        <ul>
+                            <li><a href="#">Fale com o Governo</a></li>
+                            <li><a href="#">Ouvidoria</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Governo Federal do Brasil. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="login-script.js"></script>
+</body>
+</html>

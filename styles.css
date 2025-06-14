@@ -1,0 +1,595 @@
+/* Reset e variáveis */
+:root {
+  --color-primary: #071d41;
+  --color-secondary: #1351b4;
+  --color-accent: #2670e8;
+  --color-success: #168821;
+  --color-warning: #ffcd07;
+  --color-danger: #e52207;
+  --color-background: #ffffff;
+  --color-text: #1c1c1c;
+  --color-text-light: #555555;
+  --color-border: #dddddd;
+  --font-family: "Rawline", "Segoe UI", sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --border-radius: 4px;
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  line-height: 1.6;
+  background-color: #f8f8f8;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Header */
+.gov-header {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 15px 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gov-logo {
+  height: 40px;
+}
+
+.header-nav ul {
+  display: flex;
+  gap: 20px;
+}
+
+.header-nav a {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.header-nav a:hover {
+  text-decoration: underline;
+}
+
+.login-button {
+  background-color: var(--color-secondary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.login-button:hover {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+/* Hero Section */
+.hero-section {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.announcement-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.top-logo {
+  width: 120px;
+  margin-bottom: 15px;
+}
+
+.announcement-tag {
+  background-color: var(--color-warning);
+  color: var(--color-primary);
+  padding: 6px 12px;
+  border-radius: var(--border-radius);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.main-headline {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.main-subheadline {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* Content Section */
+.content-section {
+  padding: 40px 0;
+}
+
+/* Instagram Post */
+.instagram-post {
+  max-width: 540px;
+  margin: 0 auto 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.username-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.verified-badge {
+  margin-left: 4px;
+  display: inline-flex;
+}
+
+.audio-source {
+  font-size: 12px;
+  color: var(--color-text-light);
+}
+
+.profile-button {
+  background-color: transparent;
+  color: var(--color-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.post-video-wrapper {
+  position: relative;
+  width: 100%;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.instagram-media {
+  width: 100% !important;
+  max-width: 540px !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+.video-fallback {
+  display: none;
+  padding: 20px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.post-body {
+  padding: 12px;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-text);
+  transition: var(--transition);
+}
+
+.action-button:hover {
+  color: var(--color-text-light);
+}
+
+.post-likes {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.post-caption {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.post-caption ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.post-caption li {
+  margin-bottom: 5px;
+  list-style-type: none;
+}
+
+.post-comments {
+  border-top: 1px solid var(--color-border);
+  padding-top: 12px;
+}
+
+.view-comments-button {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.comment {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* Benefits Section */
+.benefits-section {
+  margin: 60px 0;
+  text-align: center;
+}
+
+.benefits-section h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: var(--color-primary);
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.benefit-card {
+  background-color: white;
+  padding: 30px 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.benefit-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.benefit-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--color-primary);
+}
+
+.benefit-card p {
+  color: var(--color-text-light);
+  font-size: 0.95rem;
+}
+
+/* Eligibility Section */
+.eligibility-section {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 40px;
+  border-radius: 8px;
+  margin-bottom: 60px;
+}
+
+.eligibility-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.eligibility-list {
+  padding-left: 20px;
+}
+
+.eligibility-list li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 25px;
+}
+
+.eligibility-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-warning);
+  font-weight: bold;
+}
+
+/* CTA Section */
+.cta-section {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: var(--color-success);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.cta-button:hover {
+  background-color: #0d7018;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  color: white;
+}
+
+.cta-note {
+  margin-top: 15px;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+/* FAQ Section */
+.faq-section {
+  background-color: #f0f5ff;
+  padding: 60px 0;
+}
+
+.faq-section h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: var(--color-primary);
+}
+
+.accordion {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.accordion-item {
+  background-color: white;
+  border-radius: var(--border-radius);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  text-align: left;
+  padding: 15px 20px;
+  background-color: white;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.accordion-header:hover {
+  background-color: #f8f8f8;
+}
+
+.accordion-content {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.accordion-item.active .accordion-content {
+  padding: 0 20px 20px;
+  max-height: 200px;
+}
+
+.accordion-item.active .accordion-header .material-icons {
+  transform: rotate(180deg);
+}
+
+/* Footer */
+.gov-footer {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 40px 0 20px;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.footer-logo {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-links {
+  flex: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footer-column h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+}
+
+.footer-column a {
+  color: #ffffff;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.footer-column a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-nav {
+    display: none;
+  }
+
+  .main-headline {
+    font-size: 1.8rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gov-header {
+    padding: 10px 0;
+  }
+
+  .gov-logo {
+    height: 30px;
+  }
+
+  .main-headline {
+    font-size: 1.5rem;
+  }
+
+  .eligibility-section {
+    padding: 20px;
+  }
+
+  .cta-button {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
