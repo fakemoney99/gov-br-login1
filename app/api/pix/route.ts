@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const SKALEPAY_SECRET_KEY = "sk_live_v2Xi6x35K2oTiYQxAw0OYSsuXQVe2CEJldMqFBcqng"
+const SKALEPAY_SECRET_KEY = "sk_live_v2StEeaNcyD65356LatJt5MqcRpHVpZEOHC7UXtr6e"
 
 // Função para limpar documento (remover pontos, traços, etc.)
 function cleanDocument(document: string): string {
