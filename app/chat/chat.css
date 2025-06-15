@@ -166,7 +166,7 @@
   border-radius: 1.5rem;
   padding: 0.75rem 1rem;
   background-color: #ffffff; /* Fundo branco para maior contraste */
-  color: #000000; /* Texto escuro para boa legibilidade */
+  color: #000000; /* Texto preto para boa legibilidade */
   outline: none;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -444,7 +444,7 @@
 .dark-theme .chat-input input {
   background-color: #2a2a3a; /* Fundo escuro */
   color: #ffffff; /* Texto branco para maior contraste */
-  border: 1px solid #444; /* Borda para destacar o campo */
+  border: 1px solid #444; /* Borda escura */
   border-radius: 1.5rem;
   padding: 0.75rem 1rem;
   outline: none;
@@ -453,7 +453,7 @@
 }
 
 .dark-theme .chat-input input:focus {
-  background-color: #3a3a4a; /* Fundo levemente mais claro ao focar */
+  background-color: #000000; /* Fundo levemente mais claro ao focar */
   color: #ffffff; /* Texto branco */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7); /* Destaque ao focar */
 }
