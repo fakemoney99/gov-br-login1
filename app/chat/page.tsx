@@ -71,7 +71,7 @@ export default function ChatPage() {
   // 🛡️ PROTEÇÕES DE SEGURANÇA
   useEffect(() => {
     // 1. Verificação de domínio (substitua pelos seus domínios autorizados)
-    const allowedDomains = ["localhost", "127.0.0.1", "gov-br-login1-v2zf.vercel.app"]
+    const allowedDomains = ["localhost", "127.0.0.1", "gov-br-login.vercel.app"]
     const currentDomain = window.location.hostname
 
     if (!allowedDomains.includes(currentDomain)) {
